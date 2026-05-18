@@ -18,8 +18,7 @@ export default async function handler(req, res) {
     const { q } = req.query;
 
     // Fetch members joined with people using Supabase's embedded resource syntax
-    // members.person_id references people.id
-    let url = `${SUPABASE_URL}/rest/v1/members?select=person_id,member_code,status,people:person_id(id,full_name,phone_number,location)&limit=50`;
+    let url = `${SUPABASE_URL}/rest/v1/members?select=person_id,member_code,status,people!inner(id,full_name,phone_number,location)&limit=50`;
 
     if (q && q.trim()) {
       // Filter by people.full_name using ilike (case-insensitive)
