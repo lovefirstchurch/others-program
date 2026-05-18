@@ -6,98 +6,406 @@
     <title>Admin Dashboard - Others Program</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .admin-tab { flex: 1; padding: 0.75rem; text-align: center; font-weight: 600; cursor: pointer; background: #f8fafc; color: #64748b; border: none; font-size: 0.9rem; transition: all 0.2s; }
+        .admin-tab.active { background: #14b8a6; color: white; }
+        
+        .search-input { width: 100%; padding: 0.8rem 1rem 0.8rem 2.5rem; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 0.95rem; outline: none; background: #f8fafc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 0.8rem center; transition: all 0.2s; }
+        .search-input:focus { border-color: #14b8a6; box-shadow: 0 0 0 3px rgba(20,184,166,0.1); background-color: white; }
+        
+        .card-list { display: flex; flex-direction: column; gap: 0.5rem; max-height: 300px; overflow-y: auto; }
+        .card-item { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+        .card-item:hover { border-color: #14b8a6; background: #f0fdfa; }
+        .card-item.selected { border-color: #14b8a6; background: #ecfdf5; }
+        .card-item .name { font-weight: 600; color: #0f172a; font-size: 0.95rem; }
+        .card-item .sub { font-size: 0.8rem; color: #64748b; }
+        
+        .assign-btn-sm { background: #14b8a6; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+        .assign-btn-sm:hover { background: #0d9488; }
+        .remove-btn-sm { background: #fee2e2; color: #ef4444; border: none; padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+        .remove-btn-sm:hover { background: #fca5a5; color: white; }
+        
+        .section-title { font-size: 1rem; font-weight: 700; color: #0f172a; margin-bottom: 0.75rem; }
+        .section-sub { font-size: 0.85rem; color: #64748b; margin-bottom: 0.75rem; }
+        .divider { border: none; border-top: 1px solid #f1f5f9; margin: 1.5rem 0; }
+        
+        .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+        .badge-teal { background: #ccfbf1; color: #0d9488; }
+        .badge-gray { background: #f1f5f9; color: #64748b; }
+        
+        .selected-caregiver { background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+        .selected-caregiver .name { font-weight: 700; color: #059669; }
+        .change-btn { background: none; border: none; color: #64748b; cursor: pointer; font-size: 0.85rem; text-decoration: underline; }
+        
+        .sms-preview { background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem; white-space: pre-wrap; max-height: 200px; overflow-y: auto; }
+        
+        .empty-state { text-align: center; color: #94a3b8; padding: 2rem 1rem; font-size: 0.9rem; }
+        .spinner { width: 20px; height: 20px; border: 2px solid #e2e8f0; border-top-color: #14b8a6; border-radius: 50%; animation: spin 0.6s linear infinite; margin: 1rem auto; }
+        
+        .stat-row { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; }
+        .stat-card { flex: 1; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; text-align: center; }
+        .stat-card .num { font-size: 1.5rem; font-weight: 800; color: #0f172a; }
+        .stat-card .label { font-size: 0.75rem; color: #64748b; font-weight: 500; }
+    </style>
 </head>
 <body>
+
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-brand">
+            <img src="./logo.png" alt="LFC" class="nav-logo" onerror="this.style.display='none'">
+            <span class="nav-title">Others Program</span>
+        </div>
+        <button class="nav-toggle" onclick="document.getElementById('nav-links').classList.toggle('open')" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="nav-links">
+            <a href="/" class="nav-link">Attendance</a>
+            <a href="/register.html" class="nav-link">Register</a>
+            <a href="/guide.html" class="nav-link">Care Guide</a>
+            <a href="/admin.html" class="nav-link active">Admin</a>
+        </div>
+    </nav>
+
     <div class="container" style="max-width: 600px;">
         
-        <!-- Login Step -->
+        <!-- PIN Login -->
         <div class="form-wrapper" id="admin-login" style="max-width: 400px; margin: 0 auto;">
             <div class="header-section" style="margin-bottom: 1.5rem;">
                 <h1 class="form-title" style="color: #1e293b;">Admin Access</h1>
+                <p class="form-subtitle">Others Program</p>
             </div>
-            
             <div class="form-group" style="margin-bottom: 1.5rem;">
                 <label>Enter PIN <span class="required">*</span></label>
                 <input type="password" id="admin-pin" placeholder="••••" style="text-align: center; font-size: 1.5rem; letter-spacing: 0.2em;">
             </div>
-            
-            <button id="login-btn" class="submit-btn teal-btn" style="width: 100%;">Unlock</button>
+            <button id="login-btn" class="submit-btn teal-btn" style="width: 100%;">
+                <span class="btn-text">Unlock</span>
+                <div class="btn-loader"></div>
+            </button>
             <p id="login-err" style="color: #ef4444; font-size: 0.85rem; text-align: center; margin-top: 1rem; display: none;">Invalid PIN</p>
         </div>
 
-        <!-- Dashboard Step -->
+        <!-- Dashboard -->
         <div class="form-wrapper" id="admin-dashboard" style="display: none;">
-            <div class="header-section" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <div>
-                    <h1 class="form-title" style="color: #1e293b; font-size: 1.5rem;">Assignments</h1>
-                    <p class="form-subtitle">Assign souls to caregivers</p>
+                    <h1 style="font-size: 1.4rem; font-weight: 800; color: #0f172a;">Others Program</h1>
+                    <p style="color: #64748b; font-size: 0.85rem;">Admin Dashboard</p>
                 </div>
-                <button id="logout-btn" style="background: #f1f5f9; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; color: #475569;">Logout</button>
+                <button id="logout-btn" style="background: #f1f5f9; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; color: #475569; font-size: 0.85rem;">Logout</button>
             </div>
-            
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                <h3 style="font-size: 1.1rem; color: #0f172a; margin-bottom: 1rem;">New Assignment</h3>
-                
-                <div class="form-group" style="margin-bottom: 1rem;">
-                    <label>Caregiver Name / Phone</label>
-                    <input type="text" id="caregiver-input" placeholder="e.g. Charles Andrae (0248505033)">
-                </div>
-                
-                <div class="form-group" style="margin-bottom: 1.5rem;">
-                    <label>Assigned Soul Name</label>
-                    <input type="text" id="soul-input" placeholder="e.g. Prince Tetteh">
-                </div>
-                
-                <button id="assign-btn" class="submit-btn teal-btn" style="width: 100%; margin-top: 0; padding: 0.8rem;">Create Assignment & Send SMS</button>
+
+            <!-- Stats -->
+            <div class="stat-row" id="stats-row">
+                <div class="stat-card"><div class="num" id="stat-caregivers">—</div><div class="label">Caregivers</div></div>
+                <div class="stat-card"><div class="num" id="stat-souls">—</div><div class="label">Souls Assigned</div></div>
             </div>
-            
-            <div>
-                <h3 style="font-size: 1.1rem; color: #0f172a; margin-bottom: 1rem;">Recent SMS Logs</h3>
-                <div id="sms-logs" style="background: #1e293b; color: #f8fafc; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem; height: 150px; overflow-y: auto; white-space: pre-wrap;">
+
+            <!-- Tabs -->
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="assign">Assign Souls</button>
+                <button class="admin-tab" data-tab="view">View All</button>
+                <button class="admin-tab" data-tab="sms">SMS Preview</button>
+            </div>
+
+            <!-- Tab: Assign Souls -->
+            <div id="tab-assign" class="tab-content">
+                <!-- Step 1: Select caregiver -->
+                <div id="caregiver-select-section">
+                    <p class="section-title">1. Select a Caregiver</p>
+                    <input type="text" class="search-input" id="caregiver-search" placeholder="Search by name or phone...">
+                    <div class="card-list" id="caregiver-list" style="margin-top: 0.5rem;">
+                        <div class="spinner"></div>
+                    </div>
                 </div>
+
+                <!-- Step 2: Selected caregiver + assign souls -->
+                <div id="soul-assign-section" style="display: none;">
+                    <p class="section-title">Caregiver</p>
+                    <div class="selected-caregiver">
+                        <div>
+                            <div class="name" id="selected-cg-name">—</div>
+                            <div style="font-size: 0.8rem; color: #64748b;" id="selected-cg-phone">—</div>
+                        </div>
+                        <button class="change-btn" id="change-cg-btn">Change</button>
+                    </div>
+
+                    <p class="section-title">Currently Assigned</p>
+                    <div class="card-list" id="assigned-souls-list" style="margin-bottom: 1rem;">
+                        <div class="empty-state">No souls assigned yet</div>
+                    </div>
+
+                    <hr class="divider">
+
+                    <p class="section-title">2. Search & Add a Soul</p>
+                    <input type="text" class="search-input" id="soul-search" placeholder="Search member by name...">
+                    <div class="card-list" id="soul-results" style="margin-top: 0.5rem;"></div>
+                </div>
+            </div>
+
+            <!-- Tab: View All -->
+            <div id="tab-view" class="tab-content" style="display: none;">
+                <p class="section-title">All Caregivers & Their Assigned Souls</p>
+                <div id="all-assignments-list">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+
+            <!-- Tab: SMS Preview -->
+            <div id="tab-sms" class="tab-content" style="display: none;">
+                <p class="section-title">SMS Template Preview</p>
+                <p class="section-sub">Select a caregiver from the "Assign Souls" tab first to preview their SMS.</p>
+                <div class="sms-preview" id="sms-preview-content">No caregiver selected.</div>
             </div>
         </div>
     </div>
 
     <script>
-        const PIN = "1234"; // Simple pin for demo
-        
+        const PIN = "1234";
+        let allRegistrations = [];
+        let selectedCaregiverId = null;
+        let selectedCaregiverData = null;
+
+        // ─── PIN Login ───
         document.getElementById('login-btn').addEventListener('click', () => {
-            const val = document.getElementById('admin-pin').value;
-            if(val === PIN) {
+            if (document.getElementById('admin-pin').value === PIN) {
                 document.getElementById('admin-login').style.display = 'none';
                 document.getElementById('admin-dashboard').style.display = 'block';
+                loadRegistrations();
             } else {
                 document.getElementById('login-err').style.display = 'block';
             }
         });
-        
+        document.getElementById('admin-pin').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') document.getElementById('login-btn').click();
+        });
         document.getElementById('logout-btn').addEventListener('click', () => {
             document.getElementById('admin-dashboard').style.display = 'none';
             document.getElementById('admin-login').style.display = 'block';
             document.getElementById('admin-pin').value = '';
             document.getElementById('login-err').style.display = 'none';
         });
-        
-        document.getElementById('assign-btn').addEventListener('click', () => {
-            const caregiver = document.getElementById('caregiver-input').value;
-            const soul = document.getElementById('soul-input').value;
-            
-            if(!caregiver || !soul) {
-                alert('Please fill in both fields.');
+
+        // ─── Tabs ───
+        document.querySelectorAll('.admin-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+                tab.classList.add('active');
+                document.getElementById(`tab-${tab.dataset.tab}`).style.display = 'block';
+                if (tab.dataset.tab === 'view') loadAllAssignments();
+            });
+        });
+
+        // ─── Load Registrations ───
+        async function loadRegistrations() {
+            try {
+                const res = await fetch('/api/registrations');
+                const data = await res.json();
+                if (data.success) {
+                    allRegistrations = data.registrations;
+                    document.getElementById('stat-caregivers').textContent = allRegistrations.length;
+                    renderCaregiverList(allRegistrations);
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        function renderCaregiverList(list) {
+            const container = document.getElementById('caregiver-list');
+            if (!list.length) {
+                container.innerHTML = '<div class="empty-state">No caregivers found</div>';
                 return;
             }
-            
-            // Mock generating SMS
-            const smsText = `Hi ${caregiver.split(' ')[0]},\nThank you for joining the Others Program.\n\nHere are the souls assigned to you:\n${soul} 024XXXXXXX\n\nGod has placed them in your care. Please:\n1. Become a personal friend to each person.\n2. Make sure they are in church every Sunday to hear the Word of God.\n3. Try to help them with any personal needs and problems they have.\n4. Help them to fit in and be comfortable in Church.\n\nTo guide you, please review this short Care Guide:\nhttps://othersprogram.com/guide`;
-            
-            const logs = document.getElementById('sms-logs');
-            logs.innerHTML = `<div style="margin-bottom: 1rem; border-bottom: 1px solid #334155; padding-bottom: 0.5rem;"><span style="color: #14b8a6;">[SMS Sent to ${caregiver}]</span>\n${smsText}</div>` + logs.innerHTML;
-            
-            document.getElementById('caregiver-input').value = '';
-            document.getElementById('soul-input').value = '';
-            alert('Assignment saved! API to trigger SMS will be added here.');
+            container.innerHTML = list.map(r => `
+                <div class="card-item" data-id="${r.id}" onclick="selectCaregiver('${r.id}')">
+                    <div>
+                        <div class="name">${r.full_name}</div>
+                        <div class="sub">${r.phone_number} · ${r.location}</div>
+                    </div>
+                    <span class="badge badge-gray">${r.pastor_name}</span>
+                </div>
+            `).join('');
+        }
+
+        // Caregiver search filter
+        document.getElementById('caregiver-search').addEventListener('input', (e) => {
+            const q = e.target.value.toLowerCase();
+            const filtered = allRegistrations.filter(r =>
+                r.full_name.toLowerCase().includes(q) || r.phone_number.includes(q)
+            );
+            renderCaregiverList(filtered);
         });
+
+        // ─── Select Caregiver ───
+        async function selectCaregiver(id) {
+            selectedCaregiverId = id;
+            selectedCaregiverData = allRegistrations.find(r => r.id === id);
+
+            document.getElementById('selected-cg-name').textContent = selectedCaregiverData.full_name;
+            document.getElementById('selected-cg-phone').textContent = selectedCaregiverData.phone_number;
+
+            document.getElementById('caregiver-select-section').style.display = 'none';
+            document.getElementById('soul-assign-section').style.display = 'block';
+
+            await loadAssignedSouls();
+            updateSmsPreview();
+        }
+
+        document.getElementById('change-cg-btn').addEventListener('click', () => {
+            document.getElementById('caregiver-select-section').style.display = 'block';
+            document.getElementById('soul-assign-section').style.display = 'none';
+            selectedCaregiverId = null;
+            selectedCaregiverData = null;
+        });
+
+        // ─── Load Assigned Souls for selected caregiver ───
+        let currentAssignedSouls = [];
+        async function loadAssignedSouls() {
+            const container = document.getElementById('assigned-souls-list');
+            container.innerHTML = '<div class="spinner"></div>';
+
+            try {
+                const res = await fetch(`/api/assignments?registration_id=${selectedCaregiverId}`);
+                const data = await res.json();
+                if (data.success) {
+                    currentAssignedSouls = data.assignments || [];
+                    document.getElementById('stat-souls').textContent = currentAssignedSouls.length;
+                    if (!currentAssignedSouls.length) {
+                        container.innerHTML = '<div class="empty-state">No souls assigned yet</div>';
+                    } else {
+                        container.innerHTML = currentAssignedSouls.map(s => `
+                            <div class="card-item">
+                                <div>
+                                    <div class="name">${s.full_name}</div>
+                                    <div class="sub">${s.phone_number}</div>
+                                </div>
+                                <button class="remove-btn-sm" onclick="removeAssignment('${s.id}')">Remove</button>
+                            </div>
+                        `).join('');
+                    }
+                    updateSmsPreview();
+                }
+            } catch (err) {
+                container.innerHTML = '<div class="empty-state" style="color:#ef4444;">Error loading</div>';
+            }
+        }
+
+        // ─── Search Souls (Members) ───
+        let soulSearchTimer;
+        document.getElementById('soul-search').addEventListener('input', (e) => {
+            clearTimeout(soulSearchTimer);
+            const q = e.target.value.trim();
+            if (q.length < 2) {
+                document.getElementById('soul-results').innerHTML = '';
+                return;
+            }
+            soulSearchTimer = setTimeout(async () => {
+                const container = document.getElementById('soul-results');
+                container.innerHTML = '<div class="spinner"></div>';
+                try {
+                    const res = await fetch(`/api/members-search?q=${encodeURIComponent(q)}`);
+                    const data = await res.json();
+                    if (data.success && data.members.length) {
+                        container.innerHTML = data.members.map(m => `
+                            <div class="card-item">
+                                <div>
+                                    <div class="name">${m.full_name}</div>
+                                    <div class="sub">${m.phone_number} · ${m.location}</div>
+                                </div>
+                                <button class="assign-btn-sm" onclick="assignSoul('${m.person_id}')">+ Assign</button>
+                            </div>
+                        `).join('');
+                    } else {
+                        container.innerHTML = '<div class="empty-state">No members found</div>';
+                    }
+                } catch (err) {
+                    container.innerHTML = '<div class="empty-state" style="color:#ef4444;">Search failed</div>';
+                }
+            }, 400);
+        });
+
+        // ─── Assign Soul ───
+        async function assignSoul(personId) {
+            if (!selectedCaregiverId) return;
+            try {
+                const res = await fetch('/api/assignments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ registration_id: selectedCaregiverId, member_person_id: personId }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                    await loadAssignedSouls();
+                    document.getElementById('soul-search').value = '';
+                    document.getElementById('soul-results').innerHTML = '';
+                } else {
+                    alert(data.error || 'Assignment failed');
+                }
+            } catch (err) { alert('Error: ' + err.message); }
+        }
+
+        // ─── Remove Assignment ───
+        async function removeAssignment(assignmentId) {
+            if (!confirm('Remove this soul assignment?')) return;
+            try {
+                const res = await fetch(`/api/assignments?id=${assignmentId}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) await loadAssignedSouls();
+                else alert(data.error || 'Failed to remove');
+            } catch (err) { alert('Error: ' + err.message); }
+        }
+
+        // ─── SMS Preview ───
+        function updateSmsPreview() {
+            if (!selectedCaregiverData) return;
+            const firstName = selectedCaregiverData.full_name.split(' ')[0];
+            const soulsText = currentAssignedSouls.length
+                ? currentAssignedSouls.map(s => `${s.full_name}  ${s.phone_number}`).join('\n')
+                : '(no souls assigned yet)';
+
+            document.getElementById('sms-preview-content').textContent =
+`Hi ${firstName},
+Thank you for joining the Others Program.
+
+Here are the souls assigned to you:
+${soulsText}
+
+God has placed them in your care. Please:
+1. Become a personal friend to each person.
+2. Make sure they are in church every Sunday to hear the Word of God.
+3. Try to help them with any personal needs and problems they have.
+4. Help them to fit in and be comfortable in Church.
+
+To guide you, please review this short Care Guide:
+https://othersprogram.com/guide`;
+        }
+
+        // ─── View All ───
+        async function loadAllAssignments() {
+            const container = document.getElementById('all-assignments-list');
+            container.innerHTML = '<div class="spinner"></div>';
+            try {
+                // For each caregiver, fetch their assignments
+                let html = '';
+                for (const reg of allRegistrations) {
+                    const res = await fetch(`/api/assignments?registration_id=${reg.id}`);
+                    const data = await res.json();
+                    const souls = data.success ? (data.assignments || []) : [];
+                    html += `
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem;">
+                            <div style="font-weight: 700; color: #0f172a;">${reg.full_name}</div>
+                            <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 0.5rem;">${reg.phone_number} · ${reg.pastor_name}</div>
+                            ${souls.length ? souls.map(s => `<span class="badge badge-teal" style="margin-right: 0.3rem;">${s.full_name}</span>`).join('') : '<span class="badge badge-gray">No souls assigned</span>'}
+                        </div>
+                    `;
+                }
+                container.innerHTML = html || '<div class="empty-state">No registrations yet</div>';
+            } catch (err) {
+                container.innerHTML = '<div class="empty-state" style="color:#ef4444;">Error loading</div>';
+            }
+        }
     </script>
 </body>
 </html>

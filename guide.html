@@ -8,49 +8,65 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-brand">
+            <img src="./logo.png" alt="LFC" class="nav-logo" onerror="this.style.display='none'">
+            <span class="nav-title">Others Program</span>
+        </div>
+        <button class="nav-toggle" onclick="document.getElementById('nav-links').classList.toggle('open')" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="nav-links">
+            <a href="/" class="nav-link">Attendance</a>
+            <a href="/register.html" class="nav-link">Register</a>
+            <a href="/guide.html" class="nav-link active">Care Guide</a>
+            <a href="/admin.html" class="nav-link">Admin</a>
+        </div>
+    </nav>
+
     <div class="container" style="max-width: 480px;">
-        <!-- Main Form Wrapper -->
-        <div class="form-wrapper" style="padding: 2.5rem 2rem;">
+        <div class="form-wrapper">
             <div style="text-align: center; margin-bottom: 2rem;">
-                <h1 style="font-size: 1.8rem; font-weight: 800; color: #0f172a; margin-bottom: 0.2rem;">Care Guide</h1>
-                <p style="color: #64748b; font-size: 0.95rem;">Others Program</p>
+                <div class="hero-icon" style="width: 56px; height: 56px; border-radius: 16px; margin: 0 auto 1rem;">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="white" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                </div>
+                <h1 style="font-size: 1.6rem; font-weight: 800; color: #0f172a; margin-bottom: 0.15rem;">Care Guide</h1>
+                <p style="color: #94a3b8; font-size: 0.9rem;">Others Program</p>
             </div>
-            
-            <div style="text-align: center; margin-bottom: 2rem;">
-                <p style="font-style: italic; color: #475569; font-size: 1.1rem;">"God has placed them in your care."</p>
+
+            <div style="text-align: center; margin-bottom: 2rem; padding: 1rem; background: #f0fdfa; border-radius: 12px;">
+                <p style="font-style: italic; color: #475569; font-size: 1.05rem; line-height: 1.5;">"God has placed them in your care."</p>
             </div>
-            
-            <p style="font-weight: 600; color: #334155; margin-bottom: 1.5rem; font-size: 1.05rem;">Please:</p>
-            
-            <div style="display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem;">
-                <!-- Item 1 -->
-                <div style="display: flex; gap: 1rem; align-items: flex-start;">
-                    <div style="background: #ccfbf1; color: #14b8a6; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; font-size: 1rem;">1</div>
-                    <p style="color: #334155; font-size: 1.05rem; line-height: 1.5; padding-top: 4px;">Become a personal friend to each person.</p>
+
+            <p style="font-weight: 700; color: #334155; margin-bottom: 1.25rem; font-size: 1rem;">Please:</p>
+
+            <div style="display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2rem;">
+                <div style="display: flex; gap: 0.85rem; align-items: flex-start;">
+                    <div style="background: linear-gradient(135deg, #ccfbf1, #99f6e4); color: #0d9488; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; font-size: 0.95rem;">1</div>
+                    <p style="color: #334155; font-size: 1rem; line-height: 1.5; padding-top: 5px;">Become a personal friend to each person.</p>
                 </div>
-                
-                <!-- Item 2 -->
-                <div style="display: flex; gap: 1rem; align-items: flex-start;">
-                    <div style="background: #ccfbf1; color: #14b8a6; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; font-size: 1rem;">2</div>
-                    <p style="color: #334155; font-size: 1.05rem; line-height: 1.5; padding-top: 4px;">Make sure they are in church every Sunday to hear the Word of God.</p>
+
+                <div style="display: flex; gap: 0.85rem; align-items: flex-start;">
+                    <div style="background: linear-gradient(135deg, #ccfbf1, #99f6e4); color: #0d9488; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; font-size: 0.95rem;">2</div>
+                    <p style="color: #334155; font-size: 1rem; line-height: 1.5; padding-top: 5px;">Make sure they are in church every Sunday to hear the Word of God.</p>
                 </div>
-                
-                <!-- Item 3 -->
-                <div style="display: flex; gap: 1rem; align-items: flex-start;">
-                    <div style="background: #ccfbf1; color: #14b8a6; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; font-size: 1rem;">3</div>
-                    <p style="color: #334155; font-size: 1.05rem; line-height: 1.5; padding-top: 4px;">Try to help them with any personal needs and problems they have.</p>
+
+                <div style="display: flex; gap: 0.85rem; align-items: flex-start;">
+                    <div style="background: linear-gradient(135deg, #ccfbf1, #99f6e4); color: #0d9488; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; font-size: 0.95rem;">3</div>
+                    <p style="color: #334155; font-size: 1rem; line-height: 1.5; padding-top: 5px;">Try to help them with any personal needs and problems they have.</p>
                 </div>
-                
-                <!-- Item 4 -->
-                <div style="display: flex; gap: 1rem; align-items: flex-start;">
-                    <div style="background: #ccfbf1; color: #14b8a6; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; font-size: 1rem;">4</div>
-                    <p style="color: #334155; font-size: 1.05rem; line-height: 1.5; padding-top: 4px;">Help them to fit in and be comfortable in Church.</p>
+
+                <div style="display: flex; gap: 0.85rem; align-items: flex-start;">
+                    <div style="background: linear-gradient(135deg, #ccfbf1, #99f6e4); color: #0d9488; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; font-size: 0.95rem;">4</div>
+                    <p style="color: #334155; font-size: 1rem; line-height: 1.5; padding-top: 5px;">Help them to fit in and be comfortable in Church.</p>
                 </div>
             </div>
-            
-            <div style="border-top: 1px solid #f1f5f9; padding-top: 1.5rem; text-align: center;">
-                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">Keep this guide handy to remember your role.</p>
-                <a href="/" class="submit-btn teal-btn" style="text-decoration: none; display: inline-block; padding: 0.8rem 2rem;">Back to Home</a>
+
+            <div style="border-top: 1px solid #f1f5f9; padding-top: 1.25rem; text-align: center;">
+                <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 1rem;">Keep this guide handy to remember your role.</p>
+                <a href="/" class="submit-btn teal-btn" style="text-decoration: none; display: flex; justify-content: center;">Go to Attendance</a>
             </div>
         </div>
     </div>
