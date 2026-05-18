@@ -38,15 +38,19 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Submit data to Cloudflare Pages Function
+        // Submit data to Vercel Serverless Function
         submitBtn.classList.add('loading');
         submitBtn.disabled = true;
 
         const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
 
         fetch('/api/submit', {
             method: 'POST',
-            body: formData
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
         })
         .then(response => response.json())
         .then(data => {

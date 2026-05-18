@@ -1,16 +1,22 @@
-export async function onRequestPost(context) {
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ success: false, error: 'Method Not Allowed' });
+  }
+
   try {
-    const formData = await context.request.formData();
-    const data = Object.fromEntries(formData);
+    const data = req.body;
     
     // Check if Supabase env variables are set
-    if (context.env.SUPABASE_URL && context.env.SUPABASE_ANON_KEY) {
+    const SUPABASE_URL = process.env.SUPABASE_URL;
+    const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+
+    if (SUPABASE_URL && SUPABASE_ANON_KEY) {
       // Send data to Supabase
-      const response = await fetch(`${context.env.SUPABASE_URL}/rest/v1/registrations`, {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/registrations`, {
         method: 'POST',
         headers: {
-          'apikey': context.env.SUPABASE_ANON_KEY,
-          'Authorization': `Bearer ${context.env.SUPABASE_ANON_KEY}`,
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
           'Content-Type': 'application/json',
           'Prefer': 'return=minimal' // Don't return the inserted row to save bandwidth
         },
@@ -32,18 +38,9 @@ export async function onRequestPost(context) {
       console.log('Supabase env vars not set. Received data:', data);
     }
     
-    return new Response(JSON.stringify({ success: true, message: "Registration received successfully!" }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    return res.status(200).json({ success: true, message: "Registration received successfully!" });
   } catch (err) {
-    return new Response(JSON.stringify({ success: false, error: err.message }), {
-      status: 400,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    console.error('Error handling submission:', err);
+    return res.status(400).json({ success: false, error: err.message });
   }
 }
