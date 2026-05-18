@@ -50,6 +50,24 @@
     </style>
 </head>
 <body>
+
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-brand">
+            <img src="./logo.png" alt="LFC" class="nav-logo" onerror="this.style.display='none'">
+            <span class="nav-title">Others Program</span>
+        </div>
+        <button class="nav-toggle" onclick="document.getElementById('nav-links').classList.toggle('open')" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="nav-links">
+            <a href="/" class="nav-link">Attendance</a>
+            <a href="/register.html" class="nav-link">Register</a>
+            <a href="/guide.html" class="nav-link">Care Guide</a>
+            <a href="/admin.html" class="nav-link active">Admin</a>
+        </div>
+    </nav>
+
     <div class="container" style="max-width: 600px;">
         
         <!-- PIN Login -->

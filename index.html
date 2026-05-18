@@ -1,76 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Love First Church Others Program</title>
-    <meta name="description" content="Register for the upcoming service at Love First Church.">
+    <title>Others Program - Love First Church</title>
+    <meta name="description" content="Soul Attendance tracking for the Love First Church Others Program. Log in to check on your assigned souls.">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
-
 <body>
-    <!-- Removed background effects for professional look -->
 
-    <main class="container">
-        <div class="glass-panel form-wrapper">
-            <div class="header-section">
-                <!-- Please place the logo you downloaded in the same directory as this file and name it 'logo.png' -->
-                <img src="./logo.png" alt="Love First Church Logo" class="logo" id="church-logo"
-                    onerror="this.onerror=null; this.src='https://via.placeholder.com/300x150/111/fff?text=LOVE+FIRST+CHURCH';">
-                <h1 class="form-title" style="font-size: 1.6rem;">Love First Church Others Program</h1>
+    <!-- Navigation -->
+    <nav class="nav-bar" id="main-nav">
+        <div class="nav-brand">
+            <img src="./logo.png" alt="LFC" class="nav-logo" onerror="this.style.display='none'">
+            <span class="nav-title">Others Program</span>
+        </div>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="nav-links">
+            <a href="/" class="nav-link active">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Attendance
+            </a>
+            <a href="/register.html" class="nav-link">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                Register
+            </a>
+            <a href="/guide.html" class="nav-link">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                Care Guide
+            </a>
+            <a href="/admin.html" class="nav-link">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Admin
+            </a>
+        </div>
+    </nav>
+
+    <div class="container" style="padding-top: 1rem;">
+        <!-- Hero Header -->
+        <div class="header-section" style="margin-bottom: 0.5rem;">
+            <div class="hero-icon">
+                <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="white" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             </div>
+            <h1 class="form-title" style="color: #0f172a; font-size: 1.9rem; margin-top: 0.75rem;">Soul Attendance</h1>
+            <p class="form-subtitle" style="font-size: 1rem;">Others Program · Love First Church</p>
+        </div>
 
-            <form id="registration-form" class="registration-form">
-                <div class="form-group">
-                    <label for="fullName">Full Name <span class="required">*</span></label>
-                    <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
-                    <div class="focus-border"></div>
+        <!-- Main App Card -->
+        <div class="form-wrapper app-card" id="app-container">
+
+            <!-- Step 1: Phone Login -->
+            <div id="login-step" class="step step-animate">
+                <div class="step-header">
+                    <div class="step-badge">Step 1</div>
+                    <h2 class="step-title">Enter Your Phone Number</h2>
+                    <p class="step-desc">We'll look you up in the Others Program.</p>
                 </div>
 
-                <div class="form-group">
-                    <label for="phoneNumber">Phone Number <span class="required">*</span></label>
-                    <input type="tel" id="phoneNumber" name="phoneNumber"
-                        placeholder="e.g. 0501234567 or 0501234567/0551234567" required>
-                    <div class="focus-border"></div>
-                    <span class="help-text">Use / to add a second number e.g. 0501234567/0551234567</span>
+                <div class="phone-input-wrap">
+                    <div class="phone-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    </div>
+                    <input type="tel" id="login-phone" placeholder="e.g. 0248505033" autocomplete="tel" inputmode="tel">
+                    <div id="phone-status" class="phone-status">
+                        <!-- spinner or checkmark -->
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="pastorName">Name of Pastor/Shepherd <span class="required">*</span></label>
-                    <input type="text" id="pastorName" name="pastorName"
-                        placeholder="Enter the name of your pastor or shepherd" required>
-                    <div class="focus-border"></div>
+                <div id="welcome-msg" class="welcome-box" style="display: none;">
+                    <div class="welcome-avatar" id="welcome-avatar">C</div>
+                    <div>
+                        <div class="welcome-label">Welcome back,</div>
+                        <div class="welcome-name" id="caregiver-name">...</div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="location">Location <span class="required">*</span></label>
-                    <input type="text" id="location" name="location" placeholder="Enter your location" required>
-                    <div class="focus-border"></div>
-                    <span class="help-text">Type the location you belong to</span>
-                </div>
-
-                <button type="submit" class="submit-btn" id="submit-btn">
-                    <span class="btn-text">Submit Registration</span>
+                <button id="check-btn" class="submit-btn teal-btn" disabled>
+                    <span class="btn-text">View My Souls</span>
+                    <svg class="btn-arrow" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     <div class="btn-loader"></div>
                 </button>
-            </form>
 
-            <div class="footer-link">
+                <div class="login-footer">
+                    <p>Not registered? <a href="/register.html">Join the program</a></p>
+                </div>
+            </div>
+
+            <!-- Step 2: Attendance Checklist -->
+            <div id="attendance-step" class="step step-animate" style="display: none;">
+                <div class="step-header">
+                    <div class="step-badge">Step 2</div>
+                    <h2 class="step-title">Assigned Souls <span class="count-pill" id="soul-count-pill">0</span></h2>
+                    <p class="step-desc">Mark the souls that were present, then submit.</p>
+                </div>
+
+                <div class="select-bar">
+                    <button id="toggle-all-btn" class="toggle-link">Deselect All</button>
+                    <span id="selected-count" class="select-counter">0 / 0</span>
+                </div>
+
+                <div id="souls-list" class="souls-list">
+                    <!-- Populated by JS -->
+                </div>
+
+                <button id="submit-attendance-btn" class="submit-btn teal-btn">
+                    <span class="btn-text">Submit Attendance</span>
+                    <div class="btn-loader"></div>
+                </button>
+
+                <button id="back-btn" class="back-link">&larr; Back</button>
+            </div>
+
+            <!-- Step 3: Success -->
+            <div id="success-step" class="step step-animate" style="display: none;">
+                <div class="success-content">
+                    <div class="success-ring">
+                        <svg viewBox="0 0 24 24" width="40" height="40" stroke="#10b981" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <h2 class="success-title">Attendance Recorded!</h2>
+                    <p class="success-desc">Thank you for checking on your assigned souls. God bless you.</p>
+                    <button id="done-btn" class="submit-btn teal-btn" style="margin-top: 1.5rem;">Done</button>
+                </div>
             </div>
         </div>
-    </main>
-
-    <div id="success-toast" class="toast hidden">
-        <svg viewBox="0 0 24 24" width="24" height="24" class="toast-icon">
-            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor" />
-        </svg>
-        <span>Registration Successful!</span>
     </div>
 
-    <script src="script.js"></script>
-</body>
+    <!-- Toast -->
+    <div id="error-toast" class="toast" style="background: #ef4444;">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="error-msg">Error</span>
+    </div>
 
+    <script src="attendance.js"></script>
+    <script>
+        // Mobile nav toggle
+        document.getElementById('nav-toggle').addEventListener('click', () => {
+            document.getElementById('nav-links').classList.toggle('open');
+        });
+    </script>
+</body>
 </html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Others Program</title>
+    <meta name="description" content="Register for the Love First Church Others Program.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-brand">
+            <img src="./logo.png" alt="LFC" class="nav-logo" onerror="this.style.display='none'">
+            <span class="nav-title">Others Program</span>
+        </div>
+        <button class="nav-toggle" onclick="document.getElementById('nav-links').classList.toggle('open')" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+        <div class="nav-links" id="nav-links">
+            <a href="/" class="nav-link">Attendance</a>
+            <a href="/register.html" class="nav-link active">Register</a>
+            <a href="/guide.html" class="nav-link">Care Guide</a>
+            <a href="/admin.html" class="nav-link">Admin</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="form-wrapper">
+            <div class="header-section">
+                <img src="./logo.png" alt="Love First Church Logo" class="logo" onerror="this.style.display='none'">
+                <h1 class="form-title" style="font-size: 1.5rem;">Join the Others Program</h1>
+                <p class="form-subtitle">Register to become a caregiver</p>
+            </div>
+
+            <form id="registration-form" class="registration-form">
+                <div class="form-group">
+                    <label for="fullName">Full Name <span class="required">*</span></label>
+                    <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number <span class="required">*</span></label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="e.g. 0501234567" required>
+                    <span class="help-text">Use / to add a second number e.g. 050.../055...</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="pastorName">Name of Pastor/Shepherd <span class="required">*</span></label>
+                    <input type="text" id="pastorName" name="pastorName" placeholder="Enter your pastor or shepherd's name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location <span class="required">*</span></label>
+                    <input type="text" id="location" name="location" placeholder="Enter your location" required>
+                    <span class="help-text">Type the location you belong to</span>
+                </div>
+
+                <button type="submit" class="submit-btn teal-btn" id="submit-btn">
+                    <span class="btn-text">Submit Registration</span>
+                    <div class="btn-loader"></div>
+                </button>
+            </form>
+
+            <div class="login-footer">
+                <p>Already registered? <a href="/">Check Attendance</a></p>
+            </div>
+        </div>
+    </main>
+
+    <div id="success-toast" class="toast">
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/></svg>
+        <span>Registration Successful!</span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
