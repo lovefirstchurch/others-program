@@ -19,11 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const errorToast = document.getElementById('error-toast');
     const errorMsg = document.getElementById('error-msg');
-    
-    // Mock Data for assigned souls will be replaced by an assignments table
-    // For now we will mock the assigned souls in the API response logic
 
-    
     let currentCaregiver = null;
     let currentSouls = [];
     let debounceTimer;
@@ -40,9 +36,10 @@ document.addEventListener('DOMContentLoaded', () => {
         welcomeMsg.style.display = 'none';
         checkBtn.disabled = true;
         currentCaregiver = null;
+        currentSouls = [];
     }
     
-    // Auto-check phone input with Supabase
+    // Auto-check phone input — hits /api/assignments?phone=... which returns caregiver + assigned souls
     phoneInput.addEventListener('input', (e) => {
         const val = e.target.value.trim();
         
@@ -52,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             debounceTimer = setTimeout(async () => {
                 try {
                     phoneInput.style.borderColor = '#e2e8f0'; // loading state
-                    const res = await fetch(`/api/caregiver?phone=${encodeURIComponent(val)}`);
+                    const res = await fetch(`/api/assignments?phone=${encodeURIComponent(val)}`);
                     const data = await res.json();
                     
                     if (data.success && data.caregiver) {
@@ -65,10 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         checkBtn.disabled = false;
                         
                         currentCaregiver = data.caregiver;
-                        // For now, mock the assigned souls until assignments table is added
-                        currentSouls = [
-                            { id: 1, name: 'Prince Tetteh', present: true }
-                        ];
+                        currentSouls = (data.souls || []).map(s => ({ ...s, present: true }));
                     } else {
                         showInvalid();
                     }
@@ -76,9 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error(err);
                     showInvalid();
                 }
-            }, 500); // 500ms debounce
+            }, 500);
         } else {
-            showInvalid();
+            phoneInput.style.borderColor = '';
+            phoneCheck.style.display = 'none';
+            welcomeMsg.style.display = 'none';
+            checkBtn.disabled = true;
         }
     });
     
@@ -86,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     checkBtn.addEventListener('click', () => {
         if (!currentCaregiver) return;
         
-        // Populate list
         soulCount.textContent = currentSouls.length;
         renderSouls();
         updateSelectedCount();
@@ -97,6 +93,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function renderSouls() {
         soulsList.innerHTML = '';
+
+        if (!currentSouls.length) {
+            soulsList.innerHTML = '<div style="text-align:center; color:#94a3b8; padding:2rem;">No souls have been assigned to you yet.</div>';
+            return;
+        }
+
         currentSouls.forEach((soul, idx) => {
             const div = document.createElement('div');
             div.className = `soul-item ${soul.present ? 'selected' : ''}`;
@@ -104,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="checkbox-circle ${soul.present ? 'checked' : ''}">
                     ${soul.present ? '<svg viewBox="0 0 24 24" width="16" height="16" stroke="white" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
                 </div>
-                <span style="font-weight: 500; color: #0f172a;">${soul.name}</span>
+                <span style="font-weight: 500; color: #0f172a;">${soul.full_name}</span>
             `;
             div.addEventListener('click', () => {
                 currentSouls[idx].present = !currentSouls[idx].present;
@@ -130,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleAllBtn.addEventListener('click', () => {
         const selected = currentSouls.filter(s => s.present).length;
         const total = currentSouls.length;
-        const targetState = selected < total; // If not all selected, select all. Else deselect all.
+        const targetState = selected < total;
         
         currentSouls = currentSouls.map(s => ({ ...s, present: targetState }));
         renderSouls();
@@ -146,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.classList.add('loading');
         submitBtn.disabled = true;
         
-        // Mock submission to API
+        // For now mock — later we can POST attendance records
         setTimeout(() => {
             submitBtn.classList.remove('loading');
             submitBtn.disabled = false;
@@ -164,6 +166,11 @@ document.addEventListener('DOMContentLoaded', () => {
         successStep.style.display = 'none';
         loginStep.style.display = 'block';
         phoneInput.value = '';
-        phoneInput.dispatchEvent(new Event('input'));
+        phoneInput.style.borderColor = '';
+        phoneCheck.style.display = 'none';
+        welcomeMsg.style.display = 'none';
+        checkBtn.disabled = true;
+        currentCaregiver = null;
+        currentSouls = [];
     });
 });
