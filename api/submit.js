@@ -7,10 +7,16 @@ export default async function handler(req, res) {
     const data = req.body;
     
     // Check if Supabase env variables are set
-    const SUPABASE_URL = process.env.SUPABASE_URL;
+    let SUPABASE_URL = process.env.SUPABASE_URL;
     const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
     if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+      // Clean URL: remove trailing slashes and accidental /rest/v1
+      SUPABASE_URL = SUPABASE_URL.replace(/\/+$/, '');
+      if (SUPABASE_URL.endsWith('/rest/v1')) {
+        SUPABASE_URL = SUPABASE_URL.slice(0, -8);
+      }
+      
       // Send data to Supabase
       const response = await fetch(`${SUPABASE_URL}/rest/v1/registrations`, {
         method: 'POST',
