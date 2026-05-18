@@ -20,54 +20,65 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorToast = document.getElementById('error-toast');
     const errorMsg = document.getElementById('error-msg');
     
-    // Mock Data for assigned souls based on phone number
-    const mockDatabase = {
-        '0248505033': {
-            name: 'Charles Andrae Hiagbe',
-            souls: [
-                { id: 1, name: 'Prince Tetteh' },
-                { id: 2, name: 'John Doe' }
-            ]
-        }
-    };
+    // Mock Data for assigned souls will be replaced by an assignments table
+    // For now we will mock the assigned souls in the API response logic
+
     
     let currentCaregiver = null;
     let currentSouls = [];
+    let debounceTimer;
     
     function showError(msg) {
         errorMsg.textContent = msg;
         errorToast.classList.add('show');
         setTimeout(() => errorToast.classList.remove('show'), 3000);
     }
+
+    function showInvalid() {
+        phoneInput.style.borderColor = '#ef4444';
+        phoneCheck.style.display = 'none';
+        welcomeMsg.style.display = 'none';
+        checkBtn.disabled = true;
+        currentCaregiver = null;
+    }
     
-    // Auto-check phone input
+    // Auto-check phone input with Supabase
     phoneInput.addEventListener('input', (e) => {
         const val = e.target.value.trim();
+        
+        clearTimeout(debounceTimer);
+        
         if (val.length >= 10) {
-            // Mock API call
-            const user = mockDatabase[val];
-            if (user) {
-                phoneInput.style.borderColor = '#14b8a6';
-                phoneCheck.style.display = 'block';
-                phoneCheck.style.color = '#14b8a6';
-                
-                caregiverNameEl.textContent = user.name;
-                welcomeMsg.style.display = 'block';
-                checkBtn.disabled = false;
-                
-                currentCaregiver = user;
-                currentSouls = user.souls.map(s => ({ ...s, present: true })); // default selected
-            } else {
-                phoneInput.style.borderColor = '#ef4444';
-                phoneCheck.style.display = 'none';
-                welcomeMsg.style.display = 'none';
-                checkBtn.disabled = true;
-            }
+            debounceTimer = setTimeout(async () => {
+                try {
+                    phoneInput.style.borderColor = '#e2e8f0'; // loading state
+                    const res = await fetch(`/api/caregiver?phone=${encodeURIComponent(val)}`);
+                    const data = await res.json();
+                    
+                    if (data.success && data.caregiver) {
+                        phoneInput.style.borderColor = '#14b8a6';
+                        phoneCheck.style.display = 'block';
+                        phoneCheck.style.color = '#14b8a6';
+                        
+                        caregiverNameEl.textContent = data.caregiver.full_name;
+                        welcomeMsg.style.display = 'block';
+                        checkBtn.disabled = false;
+                        
+                        currentCaregiver = data.caregiver;
+                        // For now, mock the assigned souls until assignments table is added
+                        currentSouls = [
+                            { id: 1, name: 'Prince Tetteh', present: true }
+                        ];
+                    } else {
+                        showInvalid();
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showInvalid();
+                }
+            }, 500); // 500ms debounce
         } else {
-            phoneInput.style.borderColor = '';
-            phoneCheck.style.display = 'none';
-            welcomeMsg.style.display = 'none';
-            checkBtn.disabled = true;
+            showInvalid();
         }
     });
     
