@@ -31,7 +31,7 @@ export default async function handler(req, res) {
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Supabase submission failed:", errorText);
-        throw new Error("Failed to save to database.");
+        throw new Error(`Supabase Error: ${response.status} - ${errorText}`);
       }
     } else {
       // Just log it if Supabase isn't set up yet
@@ -41,6 +41,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true, message: "Registration received successfully!" });
   } catch (err) {
     console.error('Error handling submission:', err);
-    return res.status(400).json({ success: false, error: err.message });
+    return res.status(400).json({ success: false, error: err.message, stack: err.stack });
   }
 }
