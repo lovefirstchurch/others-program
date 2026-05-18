@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soul Attendance - Others Program</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header-section">
+            <h1 class="form-title" style="color: #1e293b;">Soul Attendance</h1>
+            <p class="form-subtitle">Others Program</p>
+        </div>
+
+        <!-- Main Form Wrapper -->
+        <div class="form-wrapper" id="app-container">
+            <!-- Step 1: Login -->
+            <div id="login-step" class="step active">
+                <h2 style="font-size: 1.25rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem;">Enter Your Phone Number</h2>
+                
+                <div class="form-group" style="margin-bottom: 1rem; position: relative;">
+                    <input type="tel" id="login-phone" placeholder="e.g. 0248505033" class="teal-input" style="padding-right: 40px; font-size: 1.1rem;">
+                    <div id="phone-check" class="check-icon" style="display: none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                </div>
+
+                <div id="welcome-msg" class="welcome-box" style="display: none;">
+                    Welcome, <span id="caregiver-name">...</span> !
+                </div>
+
+                <button id="check-btn" class="submit-btn teal-btn" style="margin-top: 1rem; width: 100%;" disabled>
+                    <span class="btn-text">Check Attendance</span>
+                    <div class="btn-loader"></div>
+                </button>
+            </div>
+
+            <!-- Step 2: Attendance List -->
+            <div id="attendance-step" class="step" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: #0f172a;">Assigned Souls (<span id="soul-count">0</span>)</h2>
+                </div>
+                <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 1.5rem;">Mark the souls that were present, then submit.</p>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;">
+                    <button id="toggle-all-btn" style="background: none; border: none; color: #14b8a6; font-weight: 600; cursor: pointer; font-size: 0.95rem;">Deselect All</button>
+                    <span id="selected-count" style="color: #64748b; font-size: 0.95rem;">0 / 0</span>
+                </div>
+
+                <div id="souls-list" class="souls-list" style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem; max-height: 300px; overflow-y: auto;">
+                    <!-- Souls will be populated here -->
+                </div>
+
+                <button id="submit-attendance-btn" class="submit-btn teal-btn" style="width: 100%; margin-bottom: 1rem;">
+                    <span class="btn-text">Submit Attendance</span>
+                    <div class="btn-loader"></div>
+                </button>
+                
+                <div style="text-align: center;">
+                    <button id="back-btn" style="background: none; border: none; color: #0f172a; font-weight: 600; cursor: pointer; font-size: 0.95rem;">&larr; Back</button>
+                </div>
+            </div>
+            
+            <!-- Step 3: Success -->
+            <div id="success-step" class="step" style="display: none; text-align: center; padding: 2rem 0;">
+                <div style="width: 60px; height: 60px; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                    <svg viewBox="0 0 24 24" width="30" height="30" stroke="#10b981" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <h2 style="font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem;">Attendance Recorded!</h2>
+                <p style="color: #64748b; margin-bottom: 2rem;">Thank you for checking on your assigned souls.</p>
+                <button id="done-btn" class="submit-btn teal-btn" style="width: 100%;">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="error-toast" class="toast" style="background: #ef4444;">
+        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <span id="error-msg">Error</span>
+    </div>
+
+    <script src="attendance.js"></script>
+</body>
+</html>

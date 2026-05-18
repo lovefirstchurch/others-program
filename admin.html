@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Others Program</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" style="max-width: 600px;">
+        
+        <!-- Login Step -->
+        <div class="form-wrapper" id="admin-login" style="max-width: 400px; margin: 0 auto;">
+            <div class="header-section" style="margin-bottom: 1.5rem;">
+                <h1 class="form-title" style="color: #1e293b;">Admin Access</h1>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label>Enter PIN <span class="required">*</span></label>
+                <input type="password" id="admin-pin" placeholder="••••" style="text-align: center; font-size: 1.5rem; letter-spacing: 0.2em;">
+            </div>
+            
+            <button id="login-btn" class="submit-btn teal-btn" style="width: 100%;">Unlock</button>
+            <p id="login-err" style="color: #ef4444; font-size: 0.85rem; text-align: center; margin-top: 1rem; display: none;">Invalid PIN</p>
+        </div>
+
+        <!-- Dashboard Step -->
+        <div class="form-wrapper" id="admin-dashboard" style="display: none;">
+            <div class="header-section" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                <div>
+                    <h1 class="form-title" style="color: #1e293b; font-size: 1.5rem;">Assignments</h1>
+                    <p class="form-subtitle">Assign souls to caregivers</p>
+                </div>
+                <button id="logout-btn" style="background: #f1f5f9; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; color: #475569;">Logout</button>
+            </div>
+            
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.1rem; color: #0f172a; margin-bottom: 1rem;">New Assignment</h3>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Caregiver Name / Phone</label>
+                    <input type="text" id="caregiver-input" placeholder="e.g. Charles Andrae (0248505033)">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Assigned Soul Name</label>
+                    <input type="text" id="soul-input" placeholder="e.g. Prince Tetteh">
+                </div>
+                
+                <button id="assign-btn" class="submit-btn teal-btn" style="width: 100%; margin-top: 0; padding: 0.8rem;">Create Assignment & Send SMS</button>
+            </div>
+            
+            <div>
+                <h3 style="font-size: 1.1rem; color: #0f172a; margin-bottom: 1rem;">Recent SMS Logs</h3>
+                <div id="sms-logs" style="background: #1e293b; color: #f8fafc; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem; height: 150px; overflow-y: auto; white-space: pre-wrap;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PIN = "1234"; // Simple pin for demo
+        
+        document.getElementById('login-btn').addEventListener('click', () => {
+            const val = document.getElementById('admin-pin').value;
+            if(val === PIN) {
+                document.getElementById('admin-login').style.display = 'none';
+                document.getElementById('admin-dashboard').style.display = 'block';
+            } else {
+                document.getElementById('login-err').style.display = 'block';
+            }
+        });
+        
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            document.getElementById('admin-dashboard').style.display = 'none';
+            document.getElementById('admin-login').style.display = 'block';
+            document.getElementById('admin-pin').value = '';
+            document.getElementById('login-err').style.display = 'none';
+        });
+        
+        document.getElementById('assign-btn').addEventListener('click', () => {
+            const caregiver = document.getElementById('caregiver-input').value;
+            const soul = document.getElementById('soul-input').value;
+            
+            if(!caregiver || !soul) {
+                alert('Please fill in both fields.');
+                return;
+            }
+            
+            // Mock generating SMS
+            const smsText = `Hi ${caregiver.split(' ')[0]},\nThank you for joining the Others Program.\n\nHere are the souls assigned to you:\n${soul} 024XXXXXXX\n\nGod has placed them in your care. Please:\n1. Become a personal friend to each person.\n2. Make sure they are in church every Sunday to hear the Word of God.\n3. Try to help them with any personal needs and problems they have.\n4. Help them to fit in and be comfortable in Church.\n\nTo guide you, please review this short Care Guide:\nhttps://othersprogram.com/guide`;
+            
+            const logs = document.getElementById('sms-logs');
+            logs.innerHTML = `<div style="margin-bottom: 1rem; border-bottom: 1px solid #334155; padding-bottom: 0.5rem;"><span style="color: #14b8a6;">[SMS Sent to ${caregiver}]</span>\n${smsText}</div>` + logs.innerHTML;
+            
+            document.getElementById('caregiver-input').value = '';
+            document.getElementById('soul-input').value = '';
+            alert('Assignment saved! API to trigger SMS will be added here.');
+        });
+    </script>
+</body>
+</html>
