@@ -31,8 +31,6 @@ export async function onRequestPost(context) {
       // Just log it if Supabase isn't set up yet
       console.log('Supabase env vars not set. Received data:', data);
     }
-
-
     return new Response(JSON.stringify({ success: true, message: "Registration received successfully!" }), {
       status: 200,
       headers: {
@@ -48,3 +46,5 @@ export async function onRequestPost(context) {
     });
   }
 }
+
+
