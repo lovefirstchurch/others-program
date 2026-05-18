@@ -10,18 +10,18 @@
     --text-secondary: #475569;
     --text-muted: #94a3b8;
 
-    --brand-teal: #14b8a6;
-    --brand-teal-dark: #0d9488;
-    --brand-teal-light: #ccfbf1;
+    --brand-primary: #fa7b6e; /* Coral from image */
+    --brand-primary-dark: #e85a4a;
+    --brand-primary-light: #ffeceb;
     --brand-pink: #ec4899;
     --brand-blue: #2563eb;
 
     --input-bg: #f8fafc;
     --input-border: #e2e8f0;
-    --input-focus: var(--brand-teal);
+    --input-focus: var(--brand-primary);
 
-    --btn-bg: var(--brand-teal);
-    --btn-hover: var(--brand-teal-dark);
+    --btn-bg: var(--brand-primary);
+    --btn-hover: var(--brand-primary-dark);
     --error-color: #ef4444;
     --success-color: #10b981;
 
@@ -41,7 +41,7 @@
 }
 
 body {
-    background: linear-gradient(160deg, #f0fdfa 0%, #e0e7ff 50%, #f0f9ff 100%);
+    background: linear-gradient(160deg, #fff1f0 0%, #ffe4e1 50%, #fff1f0 100%);
     color: var(--text-primary);
     min-height: 100vh;
     display: flex;
@@ -107,12 +107,12 @@ body {
 }
 
 .nav-link:hover {
-    background: var(--brand-teal-light);
-    color: var(--brand-teal-dark);
+    background: var(--brand-primary-light);
+    color: var(--brand-primary-dark);
 }
 
 .nav-link.active {
-    background: var(--brand-teal);
+    background: var(--brand-primary);
     color: white;
 }
 
@@ -181,7 +181,7 @@ body {
 .hero-icon {
     width: 64px;
     height: 64px;
-    background: linear-gradient(135deg, var(--brand-teal), #2dd4bf);
+    background: linear-gradient(135deg, var(--brand-primary), #ff9a8f);
     border-radius: 18px;
     display: flex;
     align-items: center;
@@ -235,8 +235,8 @@ body {
 
 .step-badge {
     display: inline-block;
-    background: var(--brand-teal-light);
-    color: var(--brand-teal-dark);
+    background: var(--brand-primary-light);
+    color: var(--brand-primary-dark);
     font-size: 0.7rem;
     font-weight: 700;
     padding: 0.2rem 0.6rem;
@@ -262,7 +262,7 @@ body {
 }
 
 .count-pill {
-    background: var(--brand-teal);
+    background: var(--brand-primary);
     color: white;
     font-size: 0.75rem;
     font-weight: 700;
@@ -305,13 +305,13 @@ body {
 }
 
 .phone-input-wrap input:focus {
-    border-color: var(--brand-teal);
+    border-color: var(--brand-primary);
     background: white;
     box-shadow: 0 0 0 4px rgba(20,184,166,0.1);
 }
 
 .phone-input-wrap input.valid {
-    border-color: var(--brand-teal);
+    border-color: var(--brand-primary);
 }
 
 .phone-input-wrap input.invalid {
@@ -334,13 +334,13 @@ body {
     width: 20px;
     height: 20px;
     border: 2px solid #e2e8f0;
-    border-top-color: var(--brand-teal);
+    border-top-color: var(--brand-primary);
     border-radius: 50%;
     animation: spin 0.6s linear infinite;
 }
 
 .phone-checkmark svg {
-    color: var(--brand-teal);
+    color: var(--brand-primary);
 }
 
 /* ═══ Welcome Box ═══ */
@@ -359,7 +359,7 @@ body {
 .welcome-avatar {
     width: 38px;
     height: 38px;
-    background: linear-gradient(135deg, var(--brand-teal), #2dd4bf);
+    background: linear-gradient(135deg, var(--brand-primary), #ff9a8f);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -386,7 +386,7 @@ body {
 .submit-btn {
     width: 100%;
     margin-top: 0.5rem;
-    background: linear-gradient(135deg, var(--brand-teal), #0d9488);
+    background: linear-gradient(135deg, var(--brand-primary), #0d9488);
     color: white;
     border: none;
     padding: 0.95rem 1.5rem;
@@ -439,8 +439,8 @@ body {
 .submit-btn.loading .btn-arrow { display: none; }
 .submit-btn.loading .btn-loader { display: block; }
 
-.teal-btn {
-    background: linear-gradient(135deg, var(--brand-teal), #0d9488);
+.primary-btn {
+    background: linear-gradient(135deg, var(--brand-primary), #0d9488);
     box-shadow: var(--shadow-btn);
 }
 
@@ -475,7 +475,7 @@ body {
     color: var(--text-muted);
 }
 .login-footer a {
-    color: var(--brand-teal);
+    color: var(--brand-primary);
     font-weight: 600;
     text-decoration: none;
 }
@@ -494,13 +494,13 @@ body {
 .toggle-link {
     background: none;
     border: none;
-    color: var(--brand-teal);
+    color: var(--brand-primary);
     font-weight: 600;
     cursor: pointer;
     font-size: 0.9rem;
     transition: color var(--transition);
 }
-.toggle-link:hover { color: var(--brand-teal-dark); }
+.toggle-link:hover { color: var(--brand-primary-dark); }
 
 .select-counter {
     color: var(--text-muted);
@@ -555,8 +555,8 @@ body {
 }
 
 .checkbox-circle.checked {
-    background: var(--brand-teal);
-    border-color: var(--brand-teal);
+    background: var(--brand-primary);
+    border-color: var(--brand-primary);
     animation: popIn 0.25s ease;
 }
 
@@ -663,7 +663,7 @@ input, select {
 input::placeholder { color: var(--text-muted); }
 input:hover { border-color: #94a3b8; background: white; }
 input:focus {
-    border-color: var(--brand-teal);
+    border-color: var(--brand-primary);
     background: white;
     box-shadow: 0 0 0 3px rgba(20,184,166,0.1);
 }
@@ -696,7 +696,7 @@ input:focus {
     transition: color 0.2s ease;
 }
 .footer-link a:hover {
-    color: var(--brand-teal);
+    color: var(--brand-primary);
     text-decoration: underline;
 }
 
@@ -731,9 +731,9 @@ input:focus {
 }
 
 /* ═══ Teal Input (legacy compat) ═══ */
-.teal-input {
-    border-color: var(--brand-teal);
+.primary-input {
+    border-color: var(--brand-primary);
 }
-.teal-input:focus {
+.primary-input:focus {
     box-shadow: 0 0 0 3px rgba(20,184,166,0.1);
 }

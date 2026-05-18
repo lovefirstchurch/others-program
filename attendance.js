@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showCheckmark() {
-        phoneStatus.innerHTML = '<div class="phone-checkmark"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#14b8a6" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>';
+        phoneStatus.innerHTML = '<div class="phone-checkmark"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fa7b6e" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>';
     }
 
     function showStep(step) {
