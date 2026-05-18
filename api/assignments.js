@@ -26,7 +26,7 @@ export default async function handler(req, res) {
       let url;
       if (registration_id) {
         // Fetch by registration_id, embed people to get soul names
-        url = `${SUPABASE_URL}/rest/v1/others_assignments?registration_id=eq.${registration_id}&select=id,registration_id,member_person_id,created_at,people:member_person_id(id,full_name,phone_number)`;
+        url = `${SUPABASE_URL}/rest/v1/others_assignments?registration_id=eq.${registration_id}&select=id,registration_id,member_person_id,created_at,people(id,full_name,phone_number)`;
       } else if (phone) {
         // For attendance page: first find registration by phone, then get assignments
         const regRes = await fetch(
@@ -40,7 +40,7 @@ export default async function handler(req, res) {
         }
 
         const reg = regs[0];
-        url = `${SUPABASE_URL}/rest/v1/others_assignments?registration_id=eq.${reg.id}&select=id,registration_id,member_person_id,created_at,people:member_person_id(id,full_name,phone_number)`;
+        url = `${SUPABASE_URL}/rest/v1/others_assignments?registration_id=eq.${reg.id}&select=id,registration_id,member_person_id,created_at,people(id,full_name,phone_number)`;
 
         const assignRes = await fetch(url, { headers });
         if (!assignRes.ok) throw new Error(`Supabase: ${await assignRes.text()}`);
