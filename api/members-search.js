@@ -6,9 +6,9 @@ export default async function handler(req, res) {
 
   try {
     let SUPABASE_URL = process.env.SUPABASE_URL;
-    const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+    const API_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    if (!SUPABASE_URL || !API_KEY) {
       return res.status(500).json({ success: false, error: 'Database not configured' });
     }
 
@@ -27,8 +27,8 @@ export default async function handler(req, res) {
 
     const response = await fetch(url, {
       headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': API_KEY,
+        'Authorization': `Bearer ${API_KEY}`,
       },
     });
 
