@@ -31,7 +31,7 @@
         .divider { border: none; border-top: 1px solid #f1f5f9; margin: 1.5rem 0; }
         
         .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
-        .badge-teal { background: #ccfbf1; color: #0d9488; }
+        .badge-primary { background: #ffeceb; color: #e85a4a; }
         .badge-gray { background: #f1f5f9; color: #64748b; }
         
         .selected-caregiver { background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
@@ -80,7 +80,7 @@
                 <label>Enter PIN <span class="required">*</span></label>
                 <input type="password" id="admin-pin" placeholder="••••" style="text-align: center; font-size: 1.5rem; letter-spacing: 0.2em;">
             </div>
-            <button id="login-btn" class="submit-btn teal-btn" style="width: 100%;">
+            <button id="login-btn" class="submit-btn primary-btn" style="width: 100%;">
                 <span class="btn-text">Unlock</span>
                 <div class="btn-loader"></div>
             </button>
@@ -397,7 +397,7 @@ https://othersprogram.com/guide`;
                         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem;">
                             <div style="font-weight: 700; color: #0f172a;">${reg.full_name}</div>
                             <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 0.5rem;">${reg.phone_number} · ${reg.pastor_name}</div>
-                            ${souls.length ? souls.map(s => `<span class="badge badge-teal" style="margin-right: 0.3rem;">${s.full_name}</span>`).join('') : '<span class="badge badge-gray">No souls assigned</span>'}
+                            ${souls.length ? souls.map(s => `<span class="badge badge-primary" style="margin-right: 0.3rem;">${s.full_name}</span>`).join('') : '<span class="badge badge-gray">No souls assigned</span>'}
                         </div>
                     `;
                 }
