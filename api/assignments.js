@@ -3,9 +3,10 @@
 // DELETE /api/assignments?id=... — remove assignment
 export default async function handler(req, res) {
   let SUPABASE_URL = process.env.SUPABASE_URL;
-  const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+  // Use Service Role Key to bypass RLS for private church data, fallback to Anon Key
+  const API_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  if (!SUPABASE_URL || !API_KEY) {
     return res.status(500).json({ success: false, error: 'Database not configured' });
   }
 
@@ -13,8 +14,8 @@ export default async function handler(req, res) {
   if (SUPABASE_URL.endsWith('/rest/v1')) SUPABASE_URL = SUPABASE_URL.slice(0, -8);
 
   const headers = {
-    'apikey': SUPABASE_ANON_KEY,
-    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'apikey': API_KEY,
+    'Authorization': `Bearer ${API_KEY}`,
     'Content-Type': 'application/json',
   };
 
