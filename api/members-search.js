@@ -17,44 +17,70 @@ export default async function handler(req, res) {
 
     const { q } = req.query;
 
-    // Fetch members joined with people using Supabase's embedded resource syntax
-    let url = `${SUPABASE_URL}/rest/v1/members?select=person_id,member_code,status,people!inner(id,full_name,phone_number,location)&limit=50`;
+    let membersUrl = `${SUPABASE_URL}/rest/v1/members?select=person_id,member_code,status,people!inner(id,full_name,phone_number,location)&limit=50`;
+    let visitorsUrl = `${SUPABASE_URL}/rest/v1/visitors?select=person_id,people!inner(id,full_name,phone_number,location)&limit=50`;
 
     if (q && q.trim()) {
-      // Filter by people.full_name using ilike (case-insensitive)
-      url += `&people.full_name=ilike.*${encodeURIComponent(q.trim())}*`;
+      const filter = `&people.full_name=ilike.*${encodeURIComponent(q.trim())}*`;
+      membersUrl += filter;
+      visitorsUrl += filter;
     }
 
-    const response = await fetch(url, {
-      headers: {
-        'apikey': API_KEY,
-        'Authorization': `Bearer ${API_KEY}`,
-      },
-    });
+    const headers = {
+      'apikey': API_KEY,
+      'Authorization': `Bearer ${API_KEY}`,
+    };
 
-    if (!response.ok) {
-      const errText = await response.text();
-      throw new Error(`Supabase Error: ${response.status} - ${errText}`);
+    const [membersRes, visitorsRes] = await Promise.all([
+      fetch(membersUrl, { headers }),
+      fetch(visitorsUrl, { headers })
+    ]);
+
+    if (!membersRes.ok) {
+      const errText = await membersRes.text();
+      throw new Error(`Supabase Members Error: ${membersRes.status} - ${errText}`);
+    }
+    if (!visitorsRes.ok) {
+      const errText = await visitorsRes.text();
+      throw new Error(`Supabase Visitors Error: ${visitorsRes.status} - ${errText}`);
     }
 
-    let data = await response.json();
+    let membersData = await membersRes.json();
+    let visitorsData = await visitorsRes.json();
 
-    // Flatten the result: filter out members where people join returned null (no match)
+    // Flatten results: filter out null people
     if (q && q.trim()) {
-      data = data.filter(m => m.people !== null);
+      membersData = membersData.filter(m => m.people !== null);
+      visitorsData = visitorsData.filter(v => v.people !== null);
     }
 
-    // Reshape for easier frontend consumption
-    const members = data.map(m => ({
+    // Reshape members
+    const mappedMembers = membersData.map(m => ({
       person_id: m.person_id,
-      member_code: m.member_code,
-      status: m.status,
+      member_code: m.member_code || '',
+      status: m.status || '',
       full_name: m.people?.full_name || 'Unknown',
       phone_number: m.people?.phone_number || '',
       location: m.people?.location || '',
+      type: 'Member',
     }));
 
-    return res.status(200).json({ success: true, members });
+    // Reshape visitors (first timers / new converts)
+    const mappedVisitors = visitorsData.map(v => ({
+      person_id: v.person_id,
+      member_code: '',
+      status: '',
+      full_name: v.people?.full_name || 'Unknown',
+      phone_number: v.people?.phone_number || '',
+      location: v.people?.location || '',
+      type: 'First Timer / Convert',
+    }));
+
+    // Combine and sort alphabetically
+    const combined = [...mappedMembers, ...mappedVisitors];
+    combined.sort((a, b) => a.full_name.localeCompare(b.full_name));
+
+    return res.status(200).json({ success: true, members: combined });
   } catch (err) {
     return res.status(400).json({ success: false, error: err.message });
   }
