@@ -85,6 +85,39 @@ export default async function handler(req, res) {
         return res.status(400).json({ success: false, error: 'registration_id and member_person_id are required' });
       }
 
+      // Check if member_person_id exists in public.people. If not, try promoting from fhyc_forms.
+      const peopleCheck = await fetch(`${SUPABASE_URL}/rest/v1/people?id=eq.${member_person_id}&select=id`, { headers });
+      if (!peopleCheck.ok) throw new Error(`Supabase: ${await peopleCheck.text()}`);
+      const peopleRows = await peopleCheck.json();
+
+      if (!peopleRows || peopleRows.length === 0) {
+        // Person not in people table. Check if they exist in fhyc_forms.
+        const fhycCheck = await fetch(`${SUPABASE_URL}/rest/v1/fhyc_forms?id=eq.${member_person_id}&select=name,contact,location`, { headers });
+        if (!fhycCheck.ok) throw new Error(`Supabase FHYC Check: ${await fhycCheck.text()}`);
+        const fhycRows = await fhycCheck.json();
+
+        if (fhycRows && fhycRows.length > 0) {
+          const fhycRecord = fhycRows[0];
+          // Insert a record into public.people so the foreign key constraint is satisfied.
+          const insertPerson = await fetch(`${SUPABASE_URL}/rest/v1/people`, {
+            method: 'POST',
+            headers: { ...headers, 'Prefer': 'return=minimal' },
+            body: JSON.stringify({
+              id: member_person_id,
+              full_name: fhycRecord.name,
+              phone_number: fhycRecord.contact,
+              location: fhycRecord.location
+            })
+          });
+          if (!insertPerson.ok) {
+            const errText = await insertPerson.text();
+            throw new Error(`Failed to promote FHYC record to people: ${insertPerson.status} - ${errText}`);
+          }
+        } else {
+          return res.status(404).json({ success: false, error: 'Target person not found in database' });
+        }
+      }
+
       // Check for duplicate
       const dupCheck = await fetch(
         `${SUPABASE_URL}/rest/v1/others_assignments?registration_id=eq.${registration_id}&member_person_id=eq.${member_person_id}&select=id`,
