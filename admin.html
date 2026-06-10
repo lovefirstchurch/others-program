@@ -311,7 +311,12 @@
                         container.innerHTML = data.members.map(m => `
                             <div class="card-item">
                                 <div>
-                                    <div class="name">${m.full_name}</div>
+                                    <div class="name">
+                                        ${m.full_name}
+                                        <span class="badge ${m.type === 'Member' ? 'badge-gray' : 'badge-primary'}" style="margin-left: 0.5rem; font-size: 0.7rem; padding: 0.1rem 0.4rem;">
+                                            ${m.type}
+                                        </span>
+                                    </div>
                                     <div class="sub">${m.phone_number} · ${m.location}</div>
                                 </div>
                                 <button class="assign-btn-sm" onclick="assignSoul('${m.person_id}')">+ Assign</button>
