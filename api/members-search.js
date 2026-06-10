@@ -19,11 +19,13 @@ export default async function handler(req, res) {
 
     let membersUrl = `${SUPABASE_URL}/rest/v1/members?select=person_id,member_code,status,people!inner(id,full_name,phone_number,location)&limit=50`;
     let visitorsUrl = `${SUPABASE_URL}/rest/v1/visitors?select=person_id,people!inner(id,full_name,phone_number,location)&limit=50`;
+    let fhycUrl = `${SUPABASE_URL}/rest/v1/fhyc_forms?select=id,name,contact,location,gave_life_to_christ,wants_to_join_church&limit=50`;
 
     if (q && q.trim()) {
       const filter = `&people.full_name=ilike.*${encodeURIComponent(q.trim())}*`;
       membersUrl += filter;
       visitorsUrl += filter;
+      fhycUrl += `&name=ilike.*${encodeURIComponent(q.trim())}*`;
     }
 
     const headers = {
@@ -31,9 +33,10 @@ export default async function handler(req, res) {
       'Authorization': `Bearer ${API_KEY}`,
     };
 
-    const [membersRes, visitorsRes] = await Promise.all([
+    const [membersRes, visitorsRes, fhycRes] = await Promise.all([
       fetch(membersUrl, { headers }),
-      fetch(visitorsUrl, { headers })
+      fetch(visitorsUrl, { headers }),
+      fetch(fhycUrl, { headers })
     ]);
 
     if (!membersRes.ok) {
@@ -44,9 +47,14 @@ export default async function handler(req, res) {
       const errText = await visitorsRes.text();
       throw new Error(`Supabase Visitors Error: ${visitorsRes.status} - ${errText}`);
     }
+    if (!fhycRes.ok) {
+      const errText = await fhycRes.text();
+      throw new Error(`Supabase FHYC Error: ${fhycRes.status} - ${errText}`);
+    }
 
     let membersData = await membersRes.json();
     let visitorsData = await visitorsRes.json();
+    let fhycData = await fhycRes.json();
 
     // Flatten results: filter out null people
     if (q && q.trim()) {
@@ -76,8 +84,27 @@ export default async function handler(req, res) {
       type: 'First Timer / Convert',
     }));
 
+    // Reshape fhyc_forms
+    const mappedFhyc = fhycData.map(f => {
+      let type = 'FHYC Visitor';
+      if (f.gave_life_to_christ) {
+        type = 'New Convert (FHYC)';
+      } else if (f.wants_to_join_church) {
+        type = 'First Timer (FHYC)';
+      }
+      return {
+        person_id: f.id,
+        member_code: '',
+        status: '',
+        full_name: f.name || 'Unknown',
+        phone_number: f.contact || '',
+        location: f.location || '',
+        type,
+      };
+    });
+
     // Combine and sort alphabetically
-    const combined = [...mappedMembers, ...mappedVisitors];
+    const combined = [...mappedMembers, ...mappedVisitors, ...mappedFhyc];
     combined.sort((a, b) => a.full_name.localeCompare(b.full_name));
 
     return res.status(200).json({ success: true, members: combined });
