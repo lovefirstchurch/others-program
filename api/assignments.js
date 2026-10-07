@@ -1,80 +1,52 @@
+import { getPool } from './_db.js';
+
+const SOULS_FOR_REGISTRATION = `
+  SELECT a.id, a.member_person_id AS person_id,
+         COALESCE(p.full_name, 'Unknown') AS full_name,
+         COALESCE(p.phone_number, '') AS phone_number
+    FROM others_assignments a
+    LEFT JOIN people p ON p.id = a.member_person_id
+   WHERE a.registration_id = $1`;
+
 // GET  /api/assignments?registration_id=... — get assigned souls for a caregiver
 // POST /api/assignments { registration_id, member_person_id } — create assignment
 // DELETE /api/assignments?id=... — remove assignment
 export default async function handler(req, res) {
-  let SUPABASE_URL = process.env.SUPABASE_URL;
-  // Use Service Role Key to bypass RLS for private church data, fallback to Anon Key
-  const API_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
-
-  if (!SUPABASE_URL || !API_KEY) {
+  const db = getPool();
+  if (!db) {
     return res.status(500).json({ success: false, error: 'Database not configured' });
   }
-
-  SUPABASE_URL = SUPABASE_URL.replace(/\/+$/, '');
-  if (SUPABASE_URL.endsWith('/rest/v1')) SUPABASE_URL = SUPABASE_URL.slice(0, -8);
-
-  const headers = {
-    'apikey': API_KEY,
-    'Authorization': `Bearer ${API_KEY}`,
-    'Content-Type': 'application/json',
-  };
 
   try {
     // ─── GET: fetch assignments for a registration ───
     if (req.method === 'GET') {
       const { registration_id, phone } = req.query;
 
-      let url;
       if (registration_id) {
-        // Fetch by registration_id, embed people to get soul names
-        url = `${SUPABASE_URL}/rest/v1/others_assignments?registration_id=eq.${registration_id}&select=id,registration_id,member_person_id,created_at,people(id,full_name,phone_number)`;
-      } else if (phone) {
+        const { rows } = await db.query(SOULS_FOR_REGISTRATION, [registration_id]);
+        return res.status(200).json({ success: true, assignments: rows });
+      }
+
+      if (phone) {
         // For attendance page: first find registration by phone, then get assignments
-        const regRes = await fetch(
-          `${SUPABASE_URL}/rest/v1/registrations?phone_number=eq.${encodeURIComponent(phone)}&select=id,full_name&limit=1`,
-          { headers }
+        const regs = await db.query(
+          'SELECT id, full_name FROM registrations WHERE phone_number = $1 LIMIT 1',
+          [phone]
         );
-        if (!regRes.ok) throw new Error(`Supabase: ${await regRes.text()}`);
-        const regs = await regRes.json();
-        if (!regs.length) {
+        if (!regs.rows.length) {
           return res.status(404).json({ success: false, error: 'Caregiver not found' });
         }
 
-        const reg = regs[0];
-        url = `${SUPABASE_URL}/rest/v1/others_assignments?registration_id=eq.${reg.id}&select=id,registration_id,member_person_id,created_at,people(id,full_name,phone_number)`;
-
-        const assignRes = await fetch(url, { headers });
-        if (!assignRes.ok) throw new Error(`Supabase: ${await assignRes.text()}`);
-        const assignments = await assignRes.json();
-
-        const souls = assignments.map(a => ({
-          id: a.id,
-          person_id: a.member_person_id,
-          full_name: a.people?.full_name || 'Unknown',
-          phone_number: a.people?.phone_number || '',
-        }));
-
+        const reg = regs.rows[0];
+        const { rows } = await db.query(SOULS_FOR_REGISTRATION, [reg.id]);
         return res.status(200).json({
           success: true,
           caregiver: { id: reg.id, full_name: reg.full_name },
-          souls,
+          souls: rows,
         });
-      } else {
-        return res.status(400).json({ success: false, error: 'registration_id or phone is required' });
       }
 
-      const response = await fetch(url, { headers });
-      if (!response.ok) throw new Error(`Supabase: ${await response.text()}`);
-      const assignments = await response.json();
-
-      const souls = assignments.map(a => ({
-        id: a.id,
-        person_id: a.member_person_id,
-        full_name: a.people?.full_name || 'Unknown',
-        phone_number: a.people?.phone_number || '',
-      }));
-
-      return res.status(200).json({ success: true, assignments: souls });
+      return res.status(400).json({ success: false, error: 'registration_id or phone is required' });
     }
 
     // ─── POST: create a new assignment ───
@@ -85,62 +57,45 @@ export default async function handler(req, res) {
         return res.status(400).json({ success: false, error: 'registration_id and member_person_id are required' });
       }
 
-      // Check if member_person_id exists in public.people. If not, try promoting from fhyc_forms.
-      const peopleCheck = await fetch(`${SUPABASE_URL}/rest/v1/people?id=eq.${member_person_id}&select=id`, { headers });
-      if (!peopleCheck.ok) throw new Error(`Supabase: ${await peopleCheck.text()}`);
-      const peopleRows = await peopleCheck.json();
+      // Check if member_person_id exists in people. If not, try promoting from fhyc_forms.
+      const person = await db.query('SELECT id FROM people WHERE id = $1', [member_person_id]);
 
-      if (!peopleRows || peopleRows.length === 0) {
-        // Person not in people table. Check if they exist in fhyc_forms.
-        const fhycCheck = await fetch(`${SUPABASE_URL}/rest/v1/fhyc_forms?id=eq.${member_person_id}&select=name,contact,location`, { headers });
-        if (!fhycCheck.ok) throw new Error(`Supabase FHYC Check: ${await fhycCheck.text()}`);
-        const fhycRows = await fhycCheck.json();
+      if (!person.rows.length) {
+        const fhyc = await db.query(
+          'SELECT name, contact, location FROM fhyc_forms WHERE id = $1',
+          [member_person_id]
+        );
 
-        if (fhycRows && fhycRows.length > 0) {
-          const fhycRecord = fhycRows[0];
-          // Insert a record into public.people so the foreign key constraint is satisfied.
-          const insertPerson = await fetch(`${SUPABASE_URL}/rest/v1/people`, {
-            method: 'POST',
-            headers: { ...headers, 'Prefer': 'return=minimal' },
-            body: JSON.stringify({
-              id: member_person_id,
-              full_name: fhycRecord.name,
-              phone_number: fhycRecord.contact,
-              location: fhycRecord.location
-            })
-          });
-          if (!insertPerson.ok) {
-            const errText = await insertPerson.text();
-            throw new Error(`Failed to promote FHYC record to people: ${insertPerson.status} - ${errText}`);
-          }
-        } else {
+        if (!fhyc.rows.length) {
           return res.status(404).json({ success: false, error: 'Target person not found in database' });
         }
+
+        // Insert a record into people so the foreign key constraint is satisfied.
+        const f = fhyc.rows[0];
+        await db.query(
+          `INSERT INTO people (id, full_name, phone_number, location)
+           VALUES ($1, $2, $3, $4)
+           ON CONFLICT (id) DO NOTHING`,
+          [member_person_id, f.name, f.contact, f.location]
+        );
       }
 
       // Check for duplicate
-      const dupCheck = await fetch(
-        `${SUPABASE_URL}/rest/v1/others_assignments?registration_id=eq.${registration_id}&member_person_id=eq.${member_person_id}&select=id`,
-        { headers }
+      const dups = await db.query(
+        'SELECT id FROM others_assignments WHERE registration_id = $1 AND member_person_id = $2',
+        [registration_id, member_person_id]
       );
-      const dups = await dupCheck.json();
-      if (dups && dups.length > 0) {
+      if (dups.rows.length) {
         return res.status(409).json({ success: false, error: 'This soul is already assigned to this caregiver' });
       }
 
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/others_assignments`, {
-        method: 'POST',
-        headers: { ...headers, 'Prefer': 'return=representation' },
-        body: JSON.stringify({ registration_id, member_person_id }),
-      });
-
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`Supabase: ${response.status} - ${errText}`);
-      }
-
-      const created = await response.json();
-      return res.status(201).json({ success: true, assignment: created[0] });
+      const { rows } = await db.query(
+        `INSERT INTO others_assignments (registration_id, member_person_id)
+         VALUES ($1, $2)
+         RETURNING *`,
+        [registration_id, member_person_id]
+      );
+      return res.status(201).json({ success: true, assignment: rows[0] });
     }
 
     // ─── DELETE: remove an assignment ───
@@ -148,16 +103,7 @@ export default async function handler(req, res) {
       const { id } = req.query;
       if (!id) return res.status(400).json({ success: false, error: 'Assignment id is required' });
 
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/others_assignments?id=eq.${id}`, {
-        method: 'DELETE',
-        headers,
-      });
-
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`Supabase: ${response.status} - ${errText}`);
-      }
-
+      await db.query('DELETE FROM others_assignments WHERE id = $1', [id]);
       return res.status(200).json({ success: true, message: 'Assignment removed' });
     }
 
